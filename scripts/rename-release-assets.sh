@@ -33,16 +33,8 @@ rename_windows() {
 }
 
 rename_linux() {
-  # Bundled AppImage: take whatever wails emits, excluding the lite build
-  # which is already versioned by scripts/build-appimage.sh.
-  local bundled
-  bundled="$(find "$BIN_DIR" -maxdepth 1 -name '*.AppImage' ! -name '*-system.AppImage' -printf '%f\n' | head -n 1)"
-  if [ -z "$bundled" ]; then
-    echo "Skipped bundled AppImage (not found in bin/)"
-  else
-    rename "$bundled" "ADBKit-$VERSION-linux-x86_64.AppImage"
-  fi
-
+  # The AppImage is no longer produced here: quick-sharun names it
+  # ADBKit-<version>-anylinux-<arch>.AppImage in the Anylinux workflow.
   rename "ADBKit.deb" "ADBKit-${VERSION}_amd64.deb"
   rename "ADBKit.rpm" "ADBKit-${VERSION}-1.x86_64.rpm"
   rename "ADBKit.pkg.tar.zst" "ADBKit-${VERSION}-1-x86_64.pkg.tar.zst"

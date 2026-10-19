@@ -303,12 +303,6 @@ jobs:
       - name: Build Arch package
         run: make arch
 
-      - name: Build bundled AppImage
-        run: make appimage
-
-      - name: Build system-dependent AppImage
-        run: make appimage-lite
-
       - name: Rename release assets
         run: bash scripts/rename-release-assets.sh linux
 
@@ -319,5 +313,15 @@ jobs:
           path: |
             bin/ADBKit-*.deb
             bin/ADBKit-*.rpm
-            bin/ADBKit-*.AppImage
             bin/ADBKit-*.pkg.tar.zst
+
+  # The AppImage is built by the Anylinux workflow, which is called here so it
+  # runs on every push to main as well as on tag pushes and manual dispatches.
+  # Pull requests are skipped: they only need the checks above.
+  appimage:
+    if: github.event_name != 'pull_request'
+    needs: [frontend-check]
+    # the called workflow requests write-all for its release job, and a caller
+    # can only narrow the token it hands down, never widen it
+    permissions: write-all
+    uses: ./.github/workflows/appimage.yml

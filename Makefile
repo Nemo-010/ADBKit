@@ -1,7 +1,7 @@
 APP_NAME := ADBKit
 VERSION := 2.0.0
 
-.PHONY: help deps frontend-install doctor dev build build-upx windows run lint typecheck test test-coverage check check-all package deb rpm arch appimage appimage-lite release-assets all
+.PHONY: help deps frontend-install doctor dev build build-upx windows run lint typecheck test test-coverage check check-all package deb rpm arch appimage release-assets all
 
 .DEFAULT_GOAL := help
 
@@ -17,8 +17,8 @@ help:
 	@echo "  make run        Run the current platform build"
 	@echo "  make check      Run frontend and Go checks"
 	@echo "  make package    Package the current platform"
-	@echo "  make deb rpm arch appimage  Build Linux package targets"
-	@echo "  make appimage-lite  Build a smaller system-dependency AppImage"
+	@echo "  make deb rpm arch  Build Linux package targets"
+	@echo "  make appimage   Build the Anylinux AppImage (needs an Arch container)"
 
 deps:
 	go mod download
@@ -82,11 +82,12 @@ rpm:
 arch:
 	wails3 task linux:create:aur
 
+# The AppImage is built by quick-sharun inside the Arch Linux container used by
+# .github/workflows/appimage.yml, so there is no local AppImage target here.
 appimage:
-	wails3 task linux:create:appimage
-
-appimage-lite:
-	bash scripts/build-appimage.sh
+	@echo "The AppImage is built by .github/workflows/appimage.yml"
+	@echo "Run: podman run --rm -v \"$$PWD\":/src -w /src ghcr.io/pkgforge-dev/archlinux:latest"
+	@echo "       /bin/sh -c '/bin/sh ./appimage/get-dependencies.sh && /bin/sh ./appimage/make-appimage.sh'"
 
 release-assets:
 	bash scripts/rename-release-assets.sh all

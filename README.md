@@ -142,9 +142,10 @@ ADB, Fastboot, and scrcpy must all be ready before setup can finish.
 | Windows 10 and later | Microsoft WebView2 Runtime | Portable executable and Wails packaging tasks |
 | macOS 12 and later | Platform-specific WebKit support | Build configuration is included; no macOS release artifact is currently published |
 
-Windows 7 is not supported by the v2 application. The Linux `appimage` target
-bundles more dependencies for portability. The `appimage-lite` target expects
-the host system to provide GTK4, WebKitGTK 6, and their runtime dependencies.
+Windows 7 is not supported by the v2 application. The Linux AppImage is built
+with [quick-sharun](https://github.com/pkgforge-dev/Anylinux-AppImages) and
+bundles GTK4, WebKitGTK 6 and their runtime dependencies, so it runs on any
+distribution without them installed.
 
 ## Installation
 
@@ -157,8 +158,8 @@ the [ADBKit website](https://adbkit.netlify.app) for release stats.
 For an AppImage:
 
 ```bash
-chmod +x ./ADBKit-<version>-linux-amd64.AppImage
-./ADBKit-<version>-linux-amd64.AppImage
+chmod +x ./ADBKit-<version>-anylinux-x86_64.AppImage
+./ADBKit-<version>-anylinux-x86_64.AppImage
 ```
 
 Package managers can install the files produced for their format:
@@ -239,8 +240,18 @@ wails3 package
 Linux package targets are also available through the Makefile:
 
 ```bash
-make deb rpm arch appimage
-make appimage-lite
+make deb rpm arch
+```
+
+The AppImage is built by `.github/workflows/appimage.yml` with quick-sharun
+inside the `ghcr.io/pkgforge-dev/archlinux` container, from
+`appimage/get-dependencies.sh` and `appimage/make-appimage.sh`. It is called
+from `ci.yml` and also runs on tag pushes and manual dispatches. To build it
+locally, run those two scripts in that container:
+
+```bash
+podman run --rm -v "$PWD":/src -w /src ghcr.io/pkgforge-dev/archlinux:latest \
+  /bin/sh -c '/bin/sh ./appimage/get-dependencies.sh && /bin/sh ./appimage/make-appimage.sh'
 ```
 
 After changing an exported Go service, regenerate the TypeScript bindings:

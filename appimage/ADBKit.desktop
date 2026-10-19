@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ADBKit
+Comment=Modern desktop toolkit for ADB, Fastboot, and scrcpy
+Exec=ADBKit
+Icon=ADBKit
+Terminal=false
+StartupWMClass=ADBKit
+Categories=Development;Utility;
+Keywords=adb;fastboot;scrcpy;android;
